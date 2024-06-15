@@ -2,294 +2,347 @@ import mysql.connector
 import os
 import platform
 
-cosmetics_db = mysql.connector.connect(host="localhost", user="root",
-                                       passwd="qwedsa",
-                                       database="cosmetics", charset="utf8")
+# Database connection
+cosmetics_db = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    passwd="qwedsa",
+    database="cosmetics",
+    charset="utf8"
+)
 dbcursor = cosmetics_db.cursor()
-ownerLoginId = 101
-ownerPassword = "123"
 
+# Owner credentials
+OWNER_LOGIN_ID = 11
+OWNER_PASSWORD = "123"
 
-def insertCosmetics():
-    id = int(input("Enter the cosmetic ID number : "))
-    name = input("Enter the Cosmetics Name: ")
-    company = input("Enter company of Cosmetics : ")
-    cost = int(input("Enter the Cost : "))
-    quantity = int(input("Enter the Quantity : "))
+def insert_cosmetic():
+    """Insert a new cosmetic product into the database."""
+    try:
+        product_id = int(input("Enter the cosmetic ID number: "))
+        name = input("Enter the Cosmetics Name: ")
+        company = input("Enter company of Cosmetics: ")
+        cost = int(input("Enter the Cost: "))
+        quantity = int(input("Enter the Quantity: "))
 
-    sql = "insert into product(id,name,company,cost,quantity) values (%s,%s,%s,%s,%s)"
-    parameters = (id, name, company, cost, quantity)
+        sql = "INSERT INTO product (id, name, company, cost, quantity) VALUES (%s, %s, %s, %s, %s)"
+        parameters = (product_id, name, company, cost, quantity)
 
-    dbcursor.execute(sql, parameters)
-    cosmetics_db.commit()
-    print("Product inserted successfully")
+        dbcursor.execute(sql, parameters)
+        cosmetics_db.commit()
+        print("Product inserted successfully")
+    except Exception as e:
+        print(f"Error inserting product: {e}")
 
-
-def viewCosmetics():
-    print("Select the search criteria : ")
-    print("1. Product Id")
+def view_cosmetics():
+    """View cosmetics based on different criteria."""
+    print("Select the search criteria:")
+    print("1. Product ID")
     print("2. Product Name")
     print("3. All")
-    ch = int(input("Enter the choice : "))
+    try:
+        choice = int(input("Enter your choice: "))
+    except ValueError:
+        print("Invalid input! Please enter a number.")
+        return
 
-    if ch == 1:
-        s = int(input("Enter Product ID : "))
-        parameters = (s,)
-        sql = "select * from product where id=%s"
-        dbcursor.execute(sql, parameters)
-        res = dbcursor.fetchall()
-        for x in res:
-            print(x)
-    elif ch == 2:
-        s = input("Enter Product Name : ")
-        parameters = (s,)
-        sql = "select * from product where name=%s"
-        dbcursor.execute(sql, parameters)
-        res = dbcursor.fetchall()
-        for x in res:
-            print(x)
-    elif ch == 3:
-        sql = "select * from product"
-        dbcursor.execute(sql)
-        res = dbcursor.fetchall()
-        dbcursor.execute(sql)
-        res = dbcursor.fetchall()
-        for x in res:
-            print(x)
-    else:
-        print("Invalid choice entered!")
-
-
-def purchaseCosmetics():
-    print("Please enter the details to purchase cosmetics product :\n")
-
-    sql = "select * from product"
-    dbcursor.execute(sql)
-    res = dbcursor.fetchall()
-    print("The Cosmetics Stock details are as follows : ")
-    print("(Cosmetics ID, Cosmetics Name, Cost, Quantity)")
-    for x in res:
-        print(x)
-
-    ch = 'y'
-    totalCost = 0
-    while (ch in ['y', 'Y']):
-        name = input("\nEnter the item name to be purchased : ")
-        qty = int(input("Enter the item quantity: "))
-
-        sql = "Select cost,quantity from product where name=%s"
-        parameters = (name,)
-        dbcursor.execute(sql, parameters)
-        res = dbcursor.fetchall()
-        item = res[0]
-        if (qty > item[1]):
-            print("Sorry, only " + str(item[1]) +
-                  " " + name + " are available")
+    try:
+        if choice == 1:
+            product_id = int(input("Enter Product ID: "))
+            parameters = (product_id,)
+            sql = "SELECT * FROM product WHERE id = %s"
+        elif choice == 2:
+            product_name = input("Enter Product Name: ")
+            parameters = (product_name,)
+            sql = "SELECT * FROM product WHERE name = %s"
+        elif choice == 3:
+            sql = "SELECT * FROM product"
+            parameters = ()
         else:
-            price = float(item[0])
-            totalCost += qty * price
-        ch = input("Want to purchase more items: ")
+            print("Invalid choice entered!")
+            return
 
-    print("Total cost of items purchased is Rs.", totalCost)
+        dbcursor.execute(sql, parameters)
+        results = dbcursor.fetchall()
 
+        if results:
+            print("(ID, Name, Company, Cost, Quantity)")
+            for row in results:
+                print(row)
+        else:
+            print("No products found.")
+    except Exception as e:
+        print(f"Error viewing products: {e}")
 
-def removeCosmetics():
-    id = int(input("Enter the product id to be deleted : "))
+def purchase_cosmetics():
+    """Purchase cosmetics and calculate total cost."""
+    print("Please enter the details to purchase cosmetics product:\n")
 
-    parameters = (id,)
-    sql = "Delete from product where id=%s"
+    try:
+        sql = "SELECT * FROM product"
+        dbcursor.execute(sql)
+        products = dbcursor.fetchall()
 
-    dbcursor.execute(sql, parameters)
-    cosmetics_db.commit()
-    print("Cosmetic item deleted successfully")
+        if products:
+            print("The Cosmetics Stock details are as follows:")
+            print("(ID, Name, Company, Cost, Quantity)")
+            for product in products:
+                print(product)
+        else:
+            print("No products available.")
+            return
 
+        total_cost = 0
+        while True:
+            name = input("\nEnter the item name to be purchased: ")
+            quantity = int(input("Enter the item quantity: "))
 
-def insertCustomer():
-    id = input("Enter the Customer Id : ")
-    name = input("Enter the Customer Name: ")
-    pwd = input("Enter the Customer Password: ")
-    age = input("Enter the Customer Age: ")
-    phoneno = input("Enter Phone no. of Customer : ")
-    address = input("Enter Address : ")
-    gender = input("Enter gender of customer: ")
+            sql = "SELECT cost, quantity FROM product WHERE name = %s"
+            parameters = (name,)
+            dbcursor.execute(sql, parameters)
+            product = dbcursor.fetchone()
 
-    sql = "insert into customer(id,name,age,password,phone_no,address,gender) values (%s,%s,%s,%s,%s,%s,%s)"
-    parameters = (id, name, age, pwd, phoneno, address, gender)
+            if product is None:
+                print(f"No product found with the name {name}.")
+                continue
 
-    dbcursor.execute(sql, parameters)
-    cosmetics_db.commit()
-    print("Customer details inserted successfully")
+            cost, available_quantity = product
+            if quantity > available_quantity:
+                print(f"Sorry, only {available_quantity} {name} are available")
+            else:
+                total_cost += quantity * cost
 
+            cont = input("Want to purchase more items? (y/n): ").lower()
+            if cont != 'y':
+                break
 
-def viewCustomer():
-    print("Select the search criteria : ")
+        print(f"Total cost of items purchased is Rs. {total_cost}")
+    except Exception as e:
+        print(f"Error purchasing products: {e}")
+
+def remove_cosmetic():
+    """Remove a cosmetic product from the database."""
+    try:
+        product_id = int(input("Enter the product ID to be deleted: "))
+        sql = "DELETE FROM product WHERE id = %s"
+        parameters = (product_id,)
+
+        dbcursor.execute(sql, parameters)
+        cosmetics_db.commit()
+        print("Cosmetic item deleted successfully")
+    except Exception as e:
+        print(f"Error deleting product: {e}")
+
+def insert_customer():
+    """Insert a new customer into the database."""
+    try:
+        customer_id = int(input("Enter the Customer ID: "))
+        name = input("Enter the Customer Name: ")
+        password = input("Enter the Customer Password: ")
+        age = int(input("Enter the Customer Age: "))
+        phone_no = input("Enter Phone Number of Customer: ")
+        address = input("Enter Address: ")
+        gender = input("Enter Gender of Customer: ")
+
+        sql = """
+        INSERT INTO customer (id, name, age, password, phone_no, address, gender)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """
+        parameters = (customer_id, name, age, password, phone_no, address, gender)
+
+        dbcursor.execute(sql, parameters)
+        cosmetics_db.commit()
+        print("Customer details inserted successfully")
+    except Exception as e:
+        print(f"Error inserting customer: {e}")
+
+def view_customers():
+    """View customer details based on different criteria."""
+    print("Select the search criteria:")
     print("1. Customer ID")
     print("2. Customer Name")
     print("3. All")
-    ch = int(input("Enter the choice : "))
-    if ch == 1:
-        s = int(input("Enter customer ID : "))
-        parameters = (s,)
-        sql = "select * from customer where id=%s"
+    try:
+        choice = int(input("Enter your choice: "))
+    except ValueError:
+        print("Invalid input! Please enter a number.")
+        return
+
+    try:
+        if choice == 1:
+            customer_id = int(input("Enter Customer ID: "))
+            parameters = (customer_id,)
+            sql = "SELECT * FROM customer WHERE id = %s"
+        elif choice == 2:
+            customer_name = input("Enter Customer Name: ")
+            parameters = (customer_name,)
+            sql = "SELECT * FROM customer WHERE name = %s"
+        elif choice == 3:
+            sql = "SELECT * FROM customer"
+            parameters = ()
+        else:
+            print("Invalid choice entered!")
+            return
+
         dbcursor.execute(sql, parameters)
-        res = dbcursor.fetchall()
-        for x in res:
-            print(x)
-    elif ch == 2:
-        s = input("Enter Customer Name : ")
-        parameters = (s,)
-        sql = "select * from customer where name=%s"
+        results = dbcursor.fetchall()
+
+        if results:
+            print("(ID, Name, Age, Password, Phone No, Address, Gender)")
+            for row in results:
+                print(row)
+        else:
+            print("No customers found.")
+    except Exception as e:
+        print(f"Error viewing customers: {e}")
+
+def remove_customer():
+    """Remove a customer from the database."""
+    try:
+        customer_id = int(input("Enter the customer ID to be deleted: "))
+        sql = "DELETE FROM customer WHERE id = %s"
+        parameters = (customer_id,)
+
         dbcursor.execute(sql, parameters)
-        res = dbcursor.fetchall()
-        for x in res:
-            print(x)
-    elif ch == 3:
-        sql = "select * from customer"
-        dbcursor.execute(sql)
-        res = dbcursor.fetchall()
-        print("The Customer details are as follows : ")
-        print("(Customer ID, Name, Password, Age, Phone No, Address, Gender)")
-        for x in res:
-            print(x)
+        cosmetics_db.commit()
+        print("Customer deleted successfully")
+    except Exception as e:
+        print(f"Error deleting customer: {e}")
 
-
-def removeCustomer():
-    id = int(input("Enter the customer id to be deleted : "))
-
-    parameters = (id,)
-    sql = "Delete from customer where id=%s"
-
-    dbcursor.execute(sql, parameters)
-    cosmetics_db.commit()
-    print("Customer deleted successfully")
-
-
-def menuOptions(isOwnerLogin):  # Function for the Cosmetics Menu
-    allOptions = {
-        1: "To view cosmetics product",
-        2: "To add cosmetics product",
-        3: "To purchase cosmetics",
-        4: "To remove any cosmetics product",
-        5: "To add customer details",
-        6: "To view customer details",
-        7: "To remove customer details",
-        8: "To exit the online store"
+def display_menu_options(is_owner_login):
+    """Display the menu options for owner and customer."""
+    all_options = {
+        1: "View cosmetics product",
+        2: "Add cosmetics product",
+        3: "Purchase cosmetics",
+        4: "Remove any cosmetics product",
+        5: "Add customer details",
+        6: "View customer details",
+        7: "Remove customer details",
+        8: "Exit the online store"
     }
-    options = list(range(1, 9))
 
-    if isOwnerLogin:
+    if is_owner_login:
         options = [1, 2, 4, 5, 6, 7, 8]
     else:
         options = [1, 3, 8]
 
     choice = 0
     while choice != 8:
-        print("\n\nWhat would you like to do ?")
-        for i in options:
-            print("Enter " + str(i) + " : " + allOptions[i])
+        print("\n\nWhat would you like to do?")
+        for option in options:
+            print(f"Enter {option}: {all_options[option]}")
 
         try:
-            choice = int(input("\nPlease Select An Above Option: "))
+            choice = int(input("\nPlease select an option: "))
         except ValueError:
-            print("Invalid choice entered! Please try again")
+            print("Invalid choice entered! Please try again.")
+            continue
+
+        if choice not in options:
+            print("Invalid choice entered! Please try again.")
+            continue
+        elif choice == 1:
+            view_cosmetics()
+        elif choice == 2:
+            insert_cosmetic()
+        elif choice == 3:
+            purchase_cosmetics()
+        elif choice == 4:
+            remove_cosmetic()
+        elif choice == 5:
+            insert_customer()
+        elif choice == 6:
+            view_customers()
+        elif choice == 7:
+            remove_customer()
+
+def owner_login():
+    """Authenticate the owner."""
+    try:
+        owner_id = int(input("\nPlease enter your owner login ID: "))
+        password = input("Please enter your password: ")
+
+        if owner_id == OWNER_LOGIN_ID and password == OWNER_PASSWORD:
+            clear_screen()
+            print("Login successful...")
+            print("Hi owner!\n")
+            return True
         else:
-            print("\n")
-            if choice not in options:
-                print("Invalid choice entered! Please try again")
-                continue
-            elif (choice == 1):
-                viewCosmetics()
-            elif (choice == 2):
-                insertCosmetics()
-            elif (choice == 3):
-                purchaseCosmetics()
-            elif (choice == 4):
-                removeCosmetics()
-            elif (choice == 5):
-                insertCustomer()
-            elif (choice == 6):
-                viewCustomer()
-            elif (choice == 7):
-                removeCustomer()
-
-
-def ownerLogin():
-    id = int(input("\nPlease enter your owner login id: "))
-    password = input("Please enter your password: ")
-    if id == ownerLoginId and password == ownerPassword:
-        clearScreen()
-        print("Login successful...")
-        print("Hi owner !\n")
-        return True
-    else:
-        print("Invalid id or password ! Please try again")
+            print("Invalid ID or password! Please try again.")
+            return False
+    except ValueError:
+        print("Invalid input! Please enter a number for ID.")
         return False
 
+def customer_login():
+    """Authenticate the customer."""
+    try:
+        customer_id = int(input("\nPlease enter your customer ID: "))
+        password = input("Please enter your password: ")
 
-def customerLogin():
-    id = int(input("\nPlease enter your customer id: "))
-    password = input("Please enter your password: ")
-    sql = "select * from customer where id=%s and password=%s"
-    parameters = (id, password)
-    dbcursor.execute(sql, parameters)
-    user = dbcursor.fetchall()
-    if (len(user) != 0):
-        clearScreen()
-        print("Login successful...")
-        print("Hi " + user[0][1] + " !\n")
-        return True
-    else:
-        print("Invalid id or password ! Please try again")
+        sql = "SELECT * FROM customer WHERE id = %s AND password = %s"
+        parameters = (customer_id, password)
+        dbcursor.execute(sql, parameters)
+        customer = dbcursor.fetchone()
+
+        if customer:
+            clear_screen()
+            print("Login successful...")
+            print(f"Hi {customer[1]}!\n")
+            return True
+        else:
+            print("Invalid ID or password! Please try again.")
+            return False
+    except ValueError:
+        print("Invalid input! Please enter a number for ID.")
         return False
 
-
-def clearScreen():
-    if (platform.system() == "Windows"):
+def clear_screen():
+    """Clear the console screen."""
+    if platform.system() == "Windows":
         os.system("cls")
     else:
         os.system("clear")
 
-
 def login():
-    success = False
-    loginType = 1
-    while success == False:
+    """Handle login process for owner and customer."""
+    while True:
         print("\n")
         print("Enter 1: For owner login")
         print("Enter 2: For customer login")
         print("Enter 3: Exit Online Store")
-        loginType = int(input("Enter your choice: "))
-        if loginType == 1:
-            success = ownerLogin()
-        elif loginType == 2:
-            success = customerLogin()
-        elif loginType == 3:
-            success = True
+        try:
+            choice = int(input("Enter your choice: "))
+        except ValueError:
+            print("Invalid choice entered! Please try again.")
+            continue
+
+        if choice == 1:
+            if owner_login():
+                return 1
+        elif choice == 2:
+            if customer_login():
+                return 2
+        elif choice == 3:
+            return 3
         else:
-            print("\nInvalid choice entered ! Please try again\n")
-    return loginType
-
-
-def loginOptions():
-    exit = False
-    while not exit:
-        loginType = login()
-        if loginType == 3:
-            exit = True
-        else:
-            isOwnerLogin = True
-            if loginType == 2:
-                isOwnerLogin = False
-            menuOptions(isOwnerLogin)
-
+            print("\nInvalid choice entered! Please try again.\n")
 
 def main():
-    clearScreen()
+    """Main function to start the application."""
+    clear_screen()
     print("**********************************")
     print("Welcome to Cosmetics Online Store")
     print("**********************************\n")
-    loginOptions()
 
+    while True:
+        login_type = login()
+        if login_type == 3:
+            break
+        else:
+            is_owner_login = (login_type == 1)
+            display_menu_options(is_owner_login)
 
 if __name__ == "__main__":
     main()
