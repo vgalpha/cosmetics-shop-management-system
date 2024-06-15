@@ -8,7 +8,7 @@ The Cosmetics Shop Management System is a Python-based project designed to help 
   <img src="static/images/project_overview.jpg" alt="Project Overview" width="600" height="400">
 </p>
 
-## Table of Contents11
+## Table of Contents
 
 - [Features](#features)
 - [Advantages](#advantages)
