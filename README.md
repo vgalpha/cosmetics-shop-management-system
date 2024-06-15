@@ -114,7 +114,6 @@ The Cosmetics Shop Management System is a Python-based project designed to help 
 
 ## Scope for Improvement
 
-- 🛒 Add an online ordering system to enable customers to place orders directly.
 - 👥 Support for multiple owners with separate accounts.
 - 🔒 Enhance password security by masking password input.
 - 🗂️ Add categories for cosmetic products like facewash, powder, etc.
