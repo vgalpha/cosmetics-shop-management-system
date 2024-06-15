@@ -5,7 +5,7 @@
 The Cosmetics Shop Management System is a Python-based project designed to help cosmetic shop owners manage their inventory and customer details efficiently. This system provides an easy-to-use interface for adding, viewing, and removing products, as well as handling customer data. Additionally, it allows customers to view product details and calculate the total price of products they wish to purchase.
 
 <p align="center">
-  <img src="static/images/project_overview.jpg" alt="Project Overview" width="400"/>
+  <img src="static/images/project_overview.jpg" alt="Project Overview" width=1000/>
 </p>
 
 ## Table of Contents
