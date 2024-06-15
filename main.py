@@ -12,8 +12,10 @@ cosmetics_db = mysql.connector.connect(
 )
 dbcursor = cosmetics_db.cursor()
 
+os.environ["TERM"] = "xterm"
+
 # Owner credentials
-OWNER_LOGIN_ID = 11
+OWNER_LOGIN_ID = 1
 OWNER_PASSWORD = "123"
 
 def insert_cosmetic():
