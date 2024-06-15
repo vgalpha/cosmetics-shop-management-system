@@ -14,7 +14,7 @@ The Cosmetics Shop Management System is a Python-based project designed to help 
     - [Prerequisites](#prerequisites)
     - [Steps](#steps)
 - [How to Run](#how-to-run)
-- [Test Cases](#test-cases)
+- [Usage Scenarios](#usage-scenarios)
     - [1. Owner Login](#1-owner-login)
     - [2. View Cosmetic Products](#2-view-cosmetic-products)
     - [3. Add Cosmetic Products](#3-add-cosmetic-products)
@@ -26,36 +26,26 @@ The Cosmetics Shop Management System is a Python-based project designed to help 
 
 ## Features
 
-- **Product Management**: Add, view, and remove cosmetic products from the inventory.
-  ![Product Management](static/images/product_management.png) <!-- Page 17 -->
-- **Customer Management**: Add, view, and remove customer details.
-  ![Customer Management](static/images/customer_management.png) <!-- Page 21 -->
-- **Authentication**: Separate login credentials for shop owners and customers to ensure secure access and prevent unauthorized activities.
-  ![Authentication](static/images/authentication.png) <!-- Page 20 -->
-- **Inventory Tracking**: Keep track of product details and stock quantities.
-  ![Inventory Tracking](static/images/inventory_tracking.png) <!-- Page 18 -->
-- **Cost Calculation**: Calculate the total price of products selected by customers.
-  ![Cost Calculation](static/images/cost_calculation.png) <!-- Page 22 -->
+- 🛍️ **Product Management**: Add, view, and remove cosmetic products from the inventory.
+- 👥 **Customer Management**: Add, view, and remove customer details.
+- 🔒 **Authentication**: Separate login credentials for shop owners and customers to ensure secure access and prevent unauthorized activities.
+- 📦 **Inventory Tracking**: Keep track of product details and stock quantities.
+- 💰 **Cost Calculation**: Calculate the total price of products selected by customers.
 
 ## Advantages
 
-- Automates the management of cosmetic stock, saving time and effort.
-  ![Automated Management](static/images/automated_management.png) <!-- Page 8 -->
-- Allows shop owners to effectively manage inventory and customer details.
-  ![Effective Management](static/images/effective_management.png) <!-- Page 6 -->
-- Ensures data security with authenticated access.
-  ![Data Security](static/images/data_security.png) <!-- Page 7 -->
-- Provides various search criteria for viewing products.
-  ![Search Criteria](static/images/search_criteria.png) <!-- Page 23 -->
-- Facilitates customers in calculating the total price of products they wish to purchase.
-  ![Price Calculation](static/images/price_calculation.png) <!-- Page 22 -->
+- 🚀 Automates the management of cosmetic stock, saving time and effort.
+- 🧑‍💼 Allows shop owners to effectively manage inventory and customer details.
+- 🔐 Ensures data security with authenticated access.
+- 🔍 Provides various search criteria for viewing products.
+- 💵 Facilitates customers in calculating the total price of products they wish to purchase.
 
 ## Installation
 
 ### Prerequisites
 
-- Python 3.x
-- MySQL
+- 🐍 Python 3.x
+- 🐬 MySQL
 
 ### Steps
 
@@ -74,7 +64,7 @@ The Cosmetics Shop Management System is a Python-based project designed to help 
     - Create a database named `cosmetics`.
     - Run the SQL script located in the `db.sql` file to create the necessary tables and insert sample data:
       ```sh
-      mysql -u yourusername -p cosmetics < db.sql
+      mysql -u yourusername -p yourpassword cosmetics < db.sql
       ```
 
 ## How to Run
@@ -94,7 +84,7 @@ The Cosmetics Shop Management System is a Python-based project designed to help 
 3. **Login as Customer**:
     - Use the sample customer credentials (e.g., ID: 1, Password: 123).
 
-## Test Cases
+## Usage Scenarios
 
 ### 1. Owner Login
 
@@ -122,11 +112,11 @@ The Cosmetics Shop Management System is a Python-based project designed to help 
 
 ## Scope for Improvement
 
-- Implement an online ordering system for customers to place orders directly.
-- Support for multiple owners with separate accounts.
-- Enhance password security by masking password input.
-- Add categories for cosmetic products like facewash, powder, etc.
-- Incorporate tax and discount calculations in the total cost displayed to customers.
+- 🛒 Add an online ordering system to enable customers to place orders directly.
+- 👥 Support for multiple owners with separate accounts.
+- 🔒 Enhance password security by masking password input.
+- 🗂️ Add categories for cosmetic products like facewash, powder, etc.
+- 🧾 Incorporate tax and discount calculations in the total cost displayed to customers.
 
 ## More Details
 
